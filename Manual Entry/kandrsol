@@ -1,0 +1,26 @@
+.TH kandrsol "User Commands"
+.SH NAME
+kandrsol \- A detailed command line navigator of source code and excecutables of excercises in 'The C Programming Language Second Edition'
+.SH SYNOPSIS
+.B kandrsol
+[\fI\,OPTION\/\fR]... [\fI\,CHAPTER:EXCERCISE\/\fR]
+.SH DESCRIPTION
+.\" Add any additional description here
+.PP
+Provides source code or excecuatble of requested excercise. 
+.PP
+.TP
+\fB\-s\fR, \fB\-\-source\fR
+Displays the source code of that particular excercise. If the excercise is a part of a chain of excercises which are similar (and share the same main function), the entire set is displayed together.
+.PP
+.TP
+\fB\-e\fR, \fB\-\-executable\fR
+Runs the executable code of that particular excercise. If the excercise is a part of a chain of excercises which are similar (and share the same main function), the entire set is displayed together.
+.PP
+There are several possible implementation of the source codes. However, efforts have been taken to make sure that both the source code and the executables remain most faithful to the book.
+.PP
+If unclear as to which option to choose in order to find solutions for a specific excercise, check the executable/source code. An if statement listing out the choices will mention clearly within brackets which excercise refers to which corresponding aspect of the program.
+.SH ERRORS
+Should there be any lack of clarity or error in source code or executable, contact developer at yde773786@gmail.com.
+.SH AUTHOR
+Written by Nikhil Sreekumar.
