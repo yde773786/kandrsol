@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include <ctype.h>
 #define MAXOF 100
 #define NUMBER '0'
@@ -14,6 +15,7 @@ double pop(void);
 void print(void);
 void swap(void);
 void clear(void);
+void ungets(char s[]);
 
 int var[VARLEN];
 
@@ -38,8 +40,8 @@ void main()
     printf("NOTE: sin represented by &\n");
     printf("NOTE: exp represented by ~\n");
     printf("NOTE: pow represented by ^\n");
+    printf("NOTE: assignment represented by =\n");
     printf("NOTE: clear represented by $\n\n");
-    printf("NOTE: assignment represented by =\n\n");
 
     while((type = getop(s)) != EOF)
     {
@@ -61,8 +63,8 @@ void main()
 		push(pop() * pop());
 		break;
 	    case '-' :
-		op2 = pop();
-		push(pop() - op2);
+	        op2 = pop();
+                push(pop() - op2);
 		break;
 	    case '/' :
 		op2 = pop();
@@ -222,6 +224,12 @@ int getop(char s[])
 	}
 	return VAR_USED;
     }
+    if(c == '!')
+    {
+        s[i] = '-';
+        while(isdigit(s[++i] = c = getch()))
+	    ;
+    }
     if(isdigit(c))
     {
 	while(isdigit(s[++i] = c = getch()))
@@ -232,24 +240,16 @@ int getop(char s[])
 	while(isdigit(s[++i] = c = getch()))
 	    ;
     }
-    if(c == '!')
-    {
-	s[i] = '-';
-	while(isdigit(s[++i] = c = getch()))
-	    ;
-    }
     s[i] = '\0';
-    if(c != EOF)
-    {
-	ungetch(c);
-    }
+
+    ungetch(c);
     return NUMBER;
 
 }
 
 #define BUFSIZE 100
 
-char buf[BUFSIZE];
+int buf[BUFSIZE];
 int bufp = 0;
 
 int getch(void)
@@ -264,6 +264,18 @@ void ungetch(int c)
 	printf("ungetch : too many characters\n");
     }
     else
+    {
 	buf[bufp++] = c;
+    }
 }
+
+void ungets(char s[])
+{
+    int i = strlen(s)-1;
+    while(i >= 0)
+    {
+ 	ungetch(s[i]);
+    }
+}
+
 
