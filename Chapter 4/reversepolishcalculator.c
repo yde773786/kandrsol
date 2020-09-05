@@ -13,6 +13,7 @@ int getop(char []);
 void push(double);
 double pop(void);
 void print(void);
+int getloc(void);
 void swap(void);
 void clear(void);
 void ungets(char s[]);
@@ -34,7 +35,6 @@ void main()
 	var[j] = 0;
     }
 
-    printf("NOTE: UNARY '-' represented by !\n");
     printf("NOTE: print represented by @\n");
     printf("NOTE: swap represented by #\n");
     printf("NOTE: sin represented by &\n");
@@ -189,6 +189,11 @@ void swap(void)
     }
 }
 
+int getloc(void)
+{
+    return sp-1;
+}
+
 void clear(void)
 {
     while(sp>0)
@@ -208,7 +213,7 @@ int getop(char s[])
     while((s[0] = c = getch()) == ' ' || c == '\t')
 	;
     s[1] = '\0';
-    if(!isdigit(c) && c != '.' && c != '!' && !islower(c))
+    if(!isdigit(c) && c != '.' && c != '-' && !islower(c))
     {
 	return c;
     }
@@ -224,11 +229,18 @@ int getop(char s[])
 	}
 	return VAR_USED;
     }
-    if(c == '!')
+    if(c == '-')
     {
-        s[i] = '-';
-        while(isdigit(s[++i] = c = getch()))
-	    ;
+	if(getloc() <= 0)
+	{
+           s[i] = '-';
+           while(isdigit(s[++i] = c = getch()))
+	       ;
+	}
+	else
+        {
+	    return c;
+	}
     }
     if(isdigit(c))
     {
