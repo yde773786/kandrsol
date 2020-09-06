@@ -2,5 +2,4 @@
 main()
 {
    printf("hello ) world\n");
-   /*OH YEA mi gououo)) )()( ""*/
 }
