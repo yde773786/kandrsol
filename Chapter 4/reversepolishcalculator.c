@@ -9,14 +9,17 @@
 #define VAR_ASSIGN ')'
 #define VARLEN 26
 
-int getop(char []);
+int getop(char a[]);
+int getopstr(char a[] , char b[]); 
 void push(double);
 double pop(void);
 void print(void);
 int getloc(void);
+int method(int input , char s[] , char block[]);
 void swap(void);
 void clear(void);
 void ungets(char s[]);
+int getlin(char s[] , int lim);
 
 int var[VARLEN];
 
@@ -27,6 +30,7 @@ void main()
     double op2;
     double op1;
     char s[MAXOF];
+    char block[MAXOF];
     double actualval;
 
     int j;
@@ -43,18 +47,22 @@ void main()
     printf("NOTE: assignment represented by =\n");
     printf("NOTE: clear represented by $\n\n");
 
-    while((type = getop(s)) != EOF)
+    printf("Enter desired method of calculator\n");
+    int input;
+    scanf("%d\n",&input);
+
+    while((type = method(input,s,block)) != EOF && type != 0 )
     {
 	switch (type) 
 	{
 	    case NUMBER :
-		push(atof(s));
+		push(atof(block));
 		break;
 	    case VAR_ASSIGN :
-		push(s[0]);
+		push(block[0]);
 		break;
 	    case VAR_USED :
-		push(var[s[0] - 'a']);
+		push(var[block[0] - 'a']);
 		break;
 	    case '+' :
 		push(pop() + pop());
@@ -125,10 +133,22 @@ void main()
 		printf("\t%.8g\n" , pop());
 		break;
 	    default :
-		printf("error: unknown command %s\n" , s);
+		printf("error: unknown command %s\n" , block);
 		break;
 	}
     }
+}
+
+int method(int input , char s[] , char block[])
+{
+    if(input == 1)
+    {
+	return  getop(block);
+    }
+    else
+    {
+	return getopstr(s,block);
+    }		
 }
 
 #define MAXVAL 100
@@ -259,26 +279,93 @@ int getop(char s[])
 
 }
 
-#define BUFSIZE 100
+int start_block = 0;
+int len ;
 
-int buf[BUFSIZE];
-int bufp = 0;
+int getopstr(char expression[] , char block[])
+{
+    
+    if(start_block == 0)
+    {
+       len = getlin(expression,MAXVAL);
+    }
+
+    int i;
+    for(i=start_block ; i < len ; i++)
+    {
+
+	int j,c;
+	while((block[0] = c = expression[i++]) == ' ' || c == '\t')
+	    ;
+	block[1] = '\0';
+	if(!isdigit(c) && c != '.' && c != '-' && !islower(c))
+        {
+	   start_block = (c == '\n') ? 0 : i ;
+           return block[0];
+        }
+	j = 0;
+	if(islower(c))
+	{
+	    while((c = expression[i++]) == ' ' || c == '\t')
+		;
+            start_block = i-1;
+	    if(c == '=')
+	    {
+		return VAR_ASSIGN;
+	    }
+	    return VAR_USED;
+	}
+	if(c == '-')
+        {
+	    if(getloc() <= 0)
+	    {
+		block[0] = '-';
+		while(isdigit(block[++j] = c = expression[i++]))
+		    ;
+	    }
+	    else
+	    {
+		start_block = i;
+		return c;
+	    }
+	}
+	if(isdigit(c))
+	{
+	    while(isdigit(block[++j] = c = expression[i++]))
+		;
+	}
+	if(c == '.')
+	{
+	    while(isdigit(block[++j] = c = expression[i++]))
+		;
+	}
+
+	block[j] = '\0';
+	start_block = i - 1;
+	return NUMBER;
+
+    }
+}
+
+int buf=-99;
 
 int getch(void)
 {
-    return (bufp > 0) ? buf[--bufp] : getchar();
+    if(buf==-99)
+    {
+	return getchar();
+    }
+    else
+    {
+	int tmp = buf;
+	buf = -99;
+	return tmp;
+    }
 }
 
 void ungetch(int c)
 {
-    if(bufp >= BUFSIZE)
-    {
-	printf("ungetch : too many characters\n");
-    }
-    else
-    {
-	buf[bufp++] = c;
-    }
+   buf = c;
 }
 
 void ungets(char s[])
@@ -290,4 +377,20 @@ void ungets(char s[])
     }
 }
 
+/*From Chapter 1*/
+int getlin(char s[],int lim)
+{
+    int c, i;
 
+    for(i=0; i<lim-1 && (c=getchar())!=EOF && c!='\n' ; i++)
+    {
+        s[i]=c;
+    }
+    if(c=='\n')
+    {
+        s[i]=c;
+        ++i;
+    }
+    s[i]='\0';
+    return i;
+}
