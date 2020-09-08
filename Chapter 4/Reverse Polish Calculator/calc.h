@@ -16,4 +16,5 @@ void ungets(char s[]);
 int getlin(char s[] , int lim);
 int getch(void);
 void ungetch(int);
-
+int noungetchgetop(char a[]);
+int next(void);

@@ -8,6 +8,10 @@ int method(int input , char s[] , char block[])
     {
 	return  getop(block);
     }
+    else if(input == 2)
+    {
+	return noungetchgetop(block);
+    }
     else
     {
 	return getopstr(s,block);
@@ -64,6 +68,62 @@ int getop(char s[])
     s[i] = '\0';
 
     ungetch(c);
+    return NUMBER;
+
+}
+
+static int prev = -99;
+
+int noungetchgetop(char s[])
+{
+
+    int i , c;
+
+    while((s[0] = c = next()) == ' ' || c == '\t')
+	;
+    s[1] = '\0';
+    if(!isdigit(c) && c != '.' && c != '-' && !islower(c))
+    {
+	return c;
+    }
+    i = 0;
+    if(islower(c))
+    {
+	while((c = next()) == ' ' || c== '\t')
+	    ;
+        prev = c;
+	if(c=='=')
+	{
+	    return VAR_ASSIGN;
+	}
+	return VAR_USED;
+    }
+    if(c == '-')
+    {
+	if(getloc() <= 0)
+	{
+           s[i] = '-';
+           while(isdigit(s[++i] = c = next()))
+	       ;
+	}
+	else
+        {
+	    return c;
+	}
+    }
+    if(isdigit(c))
+    {
+	while(isdigit(s[++i] = c = next()))
+	    ;
+    }
+    if(c == '.')
+    {
+	while(isdigit(s[++i] = c = next()))
+	    ;
+    }
+    s[i] = '\0';
+
+    prev = c;
     return NUMBER;
 
 }
@@ -136,6 +196,20 @@ int getopstr(char expression[] , char block[])
     }
 }
 
+int next(void)
+{
+    if(prev == -99)
+    {
+       return getch();
+    }
+   else
+    {
+	int tmp = prev;
+	prev = -99;
+	return tmp;
+    }
+}
+
 /*From Chapter 1*/
 int getlin(char s[],int lim)
 {
@@ -153,4 +227,5 @@ int getlin(char s[],int lim)
     s[i]='\0';
     return i;
 }
+
 
