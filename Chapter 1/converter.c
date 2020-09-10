@@ -6,13 +6,13 @@ double convert(int farenheit);
 
 main()
 {
-   
+
     int fahr , celsius;
     for(fahr = UPPER ; fahr >=LOWER ; fahr = fahr - 20)
     {
 	printf("%3d %6.1f\n", fahr , convert(fahr));
     }
-    
+
 }
 
 double convert(int farenheit)
