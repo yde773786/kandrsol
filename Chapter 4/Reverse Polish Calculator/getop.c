@@ -12,9 +12,13 @@ int method(int input , char s[] , char block[])
     {
 	return noungetchgetop(block);
     }
+    else if(input == 3)
+    {
+	return getopstr(s, block);
+    }
     else
     {
-	return getopstr(s,block);
+	return getoptr(block_ptr);
     }
 }
 
@@ -126,6 +130,60 @@ int noungetchgetop(char s[])
     prev = c;
     return NUMBER;
 
+}
+
+/* getopptr is from Chapter 5. Please ignore if on Chapter 4 and come back if on Chapter 5 Ex 6*/
+int getoptr(char* s)
+{
+
+    int i , c;
+
+    while((*s = c = getch()) == ' ' || c == '\t')
+	;
+    *(s+1) = '\0';
+    if(!isdigit(c) && c != '.' && c != '-' && !islower(c))
+    {
+	return c;
+    }
+    i = 0;
+    if(islower(c))
+    {
+	while((c = getch()) == ' ' || c== '\t')
+	    ;
+       ungetch(c);
+	if(c=='=')
+	{
+	    return VAR_ASSIGN;
+	}
+	return VAR_USED;
+    }
+    if(c == '-')
+    {
+	if(getloc() <= 0)
+	{
+           *(s+i) = '-';
+           while(isdigit(*(s + ++i) = c = getch()))
+	       ;
+	}
+	else
+        {
+	    return c;
+	}
+    }
+    if(isdigit(c))
+    {
+	while(isdigit(*(s + ++i) = c = getch()))
+	    ;
+    }
+    if(c == '.')
+    {
+	while(isdigit(*(s + ++i) = c = getch()))
+	    ;
+    }
+    *(s+i) = '\0';
+
+    ungetch(c);
+    return NUMBER;
 }
 
 static int start_block = 0;
