@@ -6,7 +6,7 @@ void ungetch(int);
 int getint(int *pn);
 int getfloat(float *pn);
 
-void main()
+int main()
 {
 
     printf("Enter choice 1 for getint and 2 for getfloat\n");
@@ -38,7 +38,7 @@ void main()
 int getint(int *pn)
 {
     int c, sign;
-    
+
     while(isspace(c=getch()))
 	;
     if(!isdigit(c) && c!=EOF && c!= '+' && c != '-')
@@ -124,4 +124,3 @@ void ungetch(int c)
 {
    buf = c;
 }
-
