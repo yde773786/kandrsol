@@ -5,29 +5,41 @@
 #define MAXARGS 100
 #define MAXLINE 500
 
-void detab(int* constTab, int constLen, char* output);
-int tabstop(int currentPos, int* constTab, int constLen);
+void detab(int* constTab, int constLen, char* output, int option);
+int tabstop(int currentPos, int* constTab, int constLen, int option);
 int inDefaultRange(int currentPos, int* constTab, int constLen);
 
 int main(int argc, char* argv[]) {
 
     int argint[MAXARGS];
+    int option = 0;
     if(argc >= 2)
     {
         int i = 0;
         while(*++argv)
         {
-            argint[i++] = atoi(*argv);
+            if(**argv == '-')
+            {
+                option = 1;
+            }
+            if(option)
+            {
+                argint[i++] = atoi(*argv + 1);
+            }
+            else
+            {
+                argint[i++] = atoi(*argv);
+            }
         }
     }
 
     char output[MAXLINE];
-    detab(argint, argc-1, output);
+    detab(argint, argc-1, output, option);
     printf("\n%s\n", output);
     return 0;
 }
 
-void detab(int* constTab, int constLen, char* output)
+void detab(int* constTab, int constLen, char* output, int option)
 {
     int c,i;
     int currentPos = 0;
@@ -42,7 +54,7 @@ void detab(int* constTab, int constLen, char* output)
         }
         else if(c == '\t')
         {
-            while(!tabstop(++currentPos, constTab, constLen))
+            while(!tabstop(++currentPos, constTab, constLen, option))
             {
                 *(output + outputCount++) = ' ';
             }
@@ -57,24 +69,43 @@ void detab(int* constTab, int constLen, char* output)
     *(output + outputCount) = '\0';
 }
 
-int tabstop(int currentPos, int* constTab, int constLen)
+int tabstop(int currentPos, int* constTab, int constLen, int option)
 {
-    int i;
-
-    for(i = 0; i < constLen; i++)
+    if (option) {
+        if(currentPos < constTab[0])
+        {
+            if(currentPos % DEFTAB == 0)
+            {
+                return 1;
+            }
+        }
+        else
+        {
+            if(currentPos % constTab[1] == 0)
+            {
+                return 1;
+            }
+        }
+        return 0;
+    }
+    else
     {
-        if(currentPos == *(constTab + i))
+        int i;
+        for(i = 0; i < constLen; i++)
+        {
+            if(currentPos == *(constTab + i))
+            {
+                return 1;
+            }
+        }
+
+        if(currentPos % DEFTAB == 0 && inDefaultRange(currentPos, constTab,
+            constLen))
         {
             return 1;
         }
+        return 0;
     }
-
-    if(currentPos % DEFTAB == 0 && inDefaultRange(currentPos, constTab,
-        constLen))
-    {
-        return 1;
-    }
-    return 0;
 }
 
 int inDefaultRange(int currentPos, int* constTab, int constLen)
