@@ -9,7 +9,7 @@
 static char allocbuf[ALLOCSIZE]; /* storage for alloc */
 static char *allocp = allocbuf;
 
-void tail(char** output, int limiter);
+int tail(char** output, int limiter);
 
 int main(int argc, char* argv[]) {
     int limiter;
@@ -24,12 +24,12 @@ int main(int argc, char* argv[]) {
     }
 
     char* output[MAXLINE];
-    tail(output, limiter);
+    int iterations = tail(output, limiter);
 
     int i;
-    for(i = 0; i < limiter; i++)
+    for(i = 0; i < iterations; i++)
     {
-        printf("%s\n", *output);
+        printf("%s\n", output[i]);
     }
     return 0;
 }
@@ -56,28 +56,29 @@ int getlin(char* s, int lim)
 
 char* alloc(int n);
 
-void tail(char** output, int limiter)
+int tail(char** output, int limiter)
 {
     char* input[MAXLINE];
     char line[MAXLINE];
-    char* p;
     char* q;
 
     int i = 0;
-    while(getlin(line, MAXLINE) && (p = alloc(strlen(line))) != NULL)
+    while(getlin(line, MAXLINE) && (input[i] = alloc(strlen(line) + 1)) != NULL)
     {
-        strcpy(p, line);
-        input[i++] = p;
+        strcpy(input[i], line);
+        i++;
     }
 
     int j = 0;
     int tail_start = i < limiter ? 0 : (i-1) - (limiter-1);
 
-    while(j < i && j < limiter && (q = alloc(strlen(line))) != NULL)
+    while(j < i && j < limiter && (q = alloc(strlen(input[tail_start + j]) + 1)) != NULL)
     {
        strcpy(q, input[tail_start + j]);
        output[j++] = q;
     }
+
+    return (i < limiter ? i : limiter);
 }
 
 /** From Adress Arithmetic subsection **/
